@@ -11,9 +11,9 @@ action_dims = [env.action_spaces[agent_name].shape[0] for agent_name in agents_n
 matd3_agent = MATD3(agents_names, actor_dims, action_dims)
 buffer = ReplayBuffer(50000, actor_dims, action_dims, batch_size=512, agent_names=agents_names)
 
-num_episodes = 3000 
+num_episodes = 1000 
 max_episode_len = 100   
-update_rate = 100
+update_rate = 20
 count = 0
 
 for i in range(num_episodes):
@@ -46,6 +46,6 @@ for i in range(num_episodes):
             matd3_agent.update_target_actor()
             matd3_agent.update_target_critic()
             count =0
-    if i%5==0:
-        matd3_agent.save_checkpoint()
     print(f'Episode: {i+1} - score: {score} - num step: {episode_step}')
+
+matd3_agent.save_checkpoint()
