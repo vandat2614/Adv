@@ -22,12 +22,10 @@ class CriticNetwork(nn.Module):
 
         # print(f'    init {name}')
 
-    def forward(self, state, action): # (b, 28), (b, 15)
-        state = state.to(self.device)
-        action = action.to(self.device)
-        x = F.relu(self.fc1(T.cat([state, action], dim=1))) # (b, 28+15)
+    def forward(self, state, action): # (512, 54), (512, 15)
+        x = F.relu(self.fc1(T.cat([state, action], dim=-1))) # (512, 54+15)
         x = F.relu(self.fc2(x))
-        q = self.q(x) # (b, 1)
+        q = self.q(x) # (512, 1)
 
         return q
 
@@ -55,15 +53,21 @@ class ActorNetwork(nn.Module):
         self.to(self.device)
         # print(f'    Init {name}')
 
-    def forward(self, state): # state : torch tensor (batch, input_dims=8 or 10)
+    def forward(self, state):
         x = F.relu(self.fc1(state))
         x = F.relu(self.fc2(x))
         pi = T.sigmoid(self.pi(x))
 
-        return pi # trả về 1 tensor (1, 5)
+        return pi # (, 5)
 
     def save_checkpoint(self):
         T.save(self.state_dict(), self.chkpt_file)
 
     def load_checkpoint(self):
         self.load_state_dict(T.load(self.chkpt_file))
+
+# a = T.rand((3))
+# dones = T.tensor([[True]*3, [True]*3, [False]*3])
+# print(a)
+# a[dones[:,0]]=0
+# print(a)

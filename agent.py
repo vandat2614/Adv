@@ -33,13 +33,13 @@ class Agent:
         self.update_target_critic(tau=1)
 
 
-    def choose_action(self, observation): # (actor_dim, )
-        state = T.tensor([observation], dtype=T.float).to(self.actor.device) 
-        actions = self.actor.forward(state) # (1, action_dim)
+    def choose_action(self, observation): # đầu vào là np.array(18,)
+        state = T.tensor([observation], dtype=T.float).to(self.actor.device) # shape=(1, 18)
+        actions = self.actor.forward(state) # (1, 5)
 
         noise = (T.rand(self.action_dim, device=self.actor.device) * (1 - actions).min())
         action = actions + noise
-        return action.detach().cpu().numpy()[0] # (1, action_dim) - > (action_dim, )
+        return action.detach().cpu().numpy()[0] # (1, 5) - > (5, )
 
     def update_target_actor(self, tau=None):
         if tau is None:

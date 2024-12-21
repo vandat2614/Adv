@@ -14,17 +14,21 @@ buffer = ReplayBuffer(50000, actor_dims, action_dims, batch_size=512, agent_name
 num_episodes = 30000 
 max_episode_len = 100   
 update_rate = 100
+count = 0
 
 for i in range(num_episodes):
-    state, info = env.reset()
-    critic_state = np.concatenate([s for s in state.values()])
+    state, info = env.reset() # state = dict, key = agent_name, value = np.array(18,)
+    critic_state = np.concatenate([s for s in state.values()]) # critic = np.array(54,)
     score = 0
     done = [False] * len(agents_names)
     episode_step = 0
     while not any(done):
-        actions = matd3_agent.choose_action(state)
-        next_state, reward, termination, truncation, _  = env.step(actions)
-        critic_next_state = np.concatenate([s for s in next_state.values()])
+        actions = matd3_agent.choose_action(state) # actions = dict, key = agent_name, value = np.array(5,)
+        next_state, reward, termination, truncation, _  = env.step(actions) 
+        # next_state === state
+        # reward = dict, key = agent_name, value = 1 số (float)
+        # termination === truncation = dict, key = agent_name, value = True/False
+        critic_next_state = np.concatenate([s for s in next_state.values()]) # critic_next = np.array(54, )
         score += sum(reward.values())
         episode_step += 1
         if episode_step >= max_episode_len or any(termination.values()) or any(truncation.values()):
@@ -35,9 +39,11 @@ for i in range(num_episodes):
         
         if buffer.ready():
             matd3_agent.update_critic(buffer)
-        if (i+1)%update_rate==0 and buffer.ready():
+            count += 1
+        if (count+1)%update_rate==0 and buffer.ready():
             print(f'UPDATE ACTOR')
             matd3_agent.update_actor(buffer)
             matd3_agent.update_target_actor()
             matd3_agent.update_target_critic()
+            count =0
     print(f'Episode: {i+1} - score: {score} - num step: {episode_step}')
