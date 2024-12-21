@@ -46,6 +46,7 @@ for i in range(num_episodes):
             matd3_agent.update_target_actor()
             matd3_agent.update_target_critic()
             count =0
-    print(f'Episode: {i+1} - score: {score} - num step: {episode_step}')
+    if (i+1)%100==0:
+        print(f'Episode: {i+1} - score: {score} - num step: {episode_step}')
 
 matd3_agent.save_checkpoint()
