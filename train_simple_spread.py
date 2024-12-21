@@ -41,7 +41,6 @@ for i in range(num_episodes):
             matd3_agent.update_critic(buffer)
             count += 1
         if (count+1)%update_rate==0 and buffer.ready():
-            print(f'UPDATE ACTOR')
             matd3_agent.update_actor(buffer)
             matd3_agent.update_target_actor()
             matd3_agent.update_target_critic()
