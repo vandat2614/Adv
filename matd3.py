@@ -11,6 +11,7 @@ class MATD3:
         self.n_agents = len(agent_names)
         self.action_dims = action_dims
         self.agents = {}
+        self.device = T.device('cuda:0' if T.cuda.is_available() else 'cpu')
 
         critic_dim = sum(actor_dims) + sum(action_dims)
         for agent_idx, agent_name in enumerate(agent_names): 
@@ -37,6 +38,9 @@ class MATD3:
 
         actor_states, critic_states, actions, rewards, \
         actor_next_states, critic_next_states, dones = memory.sample_buffer()
+
+        critic_states = T.tensor(critic_states, dtype=T.float).to(self.device)
+        critic_actions = T.tensor(critic_actions, dtype=T.float).to(self.device)
 
         device = self.agents['agent_0'].actor.device
 
