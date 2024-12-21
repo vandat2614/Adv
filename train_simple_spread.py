@@ -11,7 +11,7 @@ action_dims = [env.action_spaces[agent_name].shape[0] for agent_name in agents_n
 matd3_agent = MATD3(agents_names, actor_dims, action_dims)
 buffer = ReplayBuffer(50000, actor_dims, action_dims, batch_size=512, agent_names=agents_names)
 
-num_episodes = 10000 
+num_episodes = 30000 
 max_episode_len = 100   
 update_rate = 100
 count = 0
